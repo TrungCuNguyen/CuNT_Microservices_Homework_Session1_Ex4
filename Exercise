@@ -1,0 +1,22 @@
+Phương án phân chia kiến trúc cho siêu ứng dụng Shopee thành các module/service độc lập dựa trên khả năng kinh doanh (Business Capabilities), đảm bảo không bị chồng chéo chức năng:
+
+1. User & Authentication Service (Quản lý Người dùng & Xác thực)
+Trách nhiệm: Quản lý tài khoản, thông tin hồ sơ người dùng (Buyer, Seller, Admin), địa chỉ giao hàng, phân quyền (RBAC) và xác thực (đăng nhập, OTP, SSO, JWT).
+2. Product Catalog & Inventory Service (Quản lý Sản phẩm & Tồn kho)
+Trách nhiệm: Quản lý danh mục sản phẩm, chi tiết mặt hàng, biến thể (màu sắc, kích thước), hình ảnh, thông tin người bán đăng tải và số lượng tồn kho theo thời gian thực (Stock/Inventory).
+3. Order Management Service (Quản lý Đơn hàng)
+Trách nhiệm: Tiếp nhận yêu cầu mua hàng từ giỏ hàng, khởi tạo đơn hàng, quản lý trạng thái vòng đời của đơn (Chờ thanh toán, Đã xác nhận, Đang giao, Hoàn thành, Hủy đơn) và xử lý quy trình trả hàng/hoàn tiền (Return/Refund).
+4. Payment Service (Quản lý Thanh toán)
+Trách nhiệm: Tích hợp và xử lý giao dịch với các cổng thanh toán (ShopeePay, thẻ tín dụng, ngân hàng, COD), quản lý số dư ví, hoàn tiền cho khách hàng và đối soát tài chính.
+5. Logistics & Shipping Service (Quản lý Vận chuyển & Giao hàng)
+Trách nhiệm: Tích hợp với các đơn vị vận chuyển (Shopee Express, GNT, Viettel Post...), tính toán phí giao hàng, tạo mã vận đơn (Tracking ID) và cập nhật hành trình đơn hàng theo thời gian thực.
+6. Promotion & Voucher Service (Quản lý Khuyến mãi & Mã giảm giá)
+Trách nhiệm: Quản lý các chương trình ưu đãi, mã giảm giá (Voucher Shopee, Voucher Shop), chương trình hoàn xu, Flash Sale và kiểm tra điều kiện áp dụng giảm giá cho đơn hàng.
+7. Notification Service (Dịch vụ Thông báo - Module bổ sung)
+Trách nhiệm: Đẩy thông báo đa kênh (Push Notification trên app, SMS, Email) về trạng thái đơn hàng, tin nhắn khuyến mãi hoặc biến động số dư tài khoản đến người dùng.
+
+Nguyên tắc thiết kế đảm bảo không chồng chéo (Decoupling Principles)
+
+Database-per-service: Mỗi service quản lý cơ sở dữ liệu riêng biệt (ví dụ: Order Service không truy cập trực tiếp vào bảng `Products` của Product Service mà phải gọi qua API hoặc nghe Event).
+
+Bounded Context: Định nghĩa rõ ranh giới khái niệm (ví dụ: Product trong Catalog Service chứa thông tin mô tả/hình ảnh, nhưng Product trong Order Service chỉ lưu snapshot thông tin tại thời điểm mua).
